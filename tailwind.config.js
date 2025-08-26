@@ -1,0 +1,81 @@
+/** @type {import('tailwindcss').Config} */
+export default {
+  content: ['./index.html', './src/**/*.{js,ts,jsx,tsx}'],
+  theme: {
+    extend: {
+      colors: {
+        coral: {
+          DEFAULT: '#FF6B6B',
+          50: '#FFF5F5',
+          100: '#FFE8E8',
+          200: '#FFD1D1',
+          300: '#FFB3B3',
+          400: '#FF8F8F',
+          500: '#FF6B6B',
+          600: '#FF4747',
+          700: '#FF2323',
+          800: '#E60000',
+          900: '#C20000',
+          dark: '#E55A5A',
+        },
+        teal: {
+          DEFAULT: '#4ECDC4',
+          50: '#F0FCFB',
+          100: '#D6F5F2',
+          200: '#ADEAE5',
+          300: '#84DFD8',
+          400: '#5BD4CB',
+          500: '#4ECDC4',
+          600: '#3BA39C',
+          700: '#2E7B76',
+          800: '#215450',
+          900: '#142D2A',
+        },
+        gold: {
+          DEFAULT: '#FFD93D',
+          50: '#FFFDF0',
+          100: '#FFF9D9',
+          200: '#FFF3B3',
+          300: '#FFED8C',
+          400: '#FFE666',
+          500: '#FFD93D',
+          600: '#FFCC0A',
+          700: '#D4AA00',
+          800: '#A18800',
+          900: '#6E5C00',
+        },
+      },
+      fontFamily: {
+        sans: [
+          'Inter',
+          '-apple-system',
+          'BlinkMacSystemFont',
+          'Segoe UI',
+          'Roboto',
+          'Oxygen',
+          'Ubuntu',
+          'Cantarell',
+          'sans-serif',
+        ],
+      },
+      animation: {
+        'bounce-slow': 'bounce 3s infinite',
+        'pulse-slow': 'pulse 3s infinite',
+        'spin-slow': 'spin 3s linear infinite',
+      },
+      backdropBlur: {
+        xs: '2px',
+      },
+      spacing: {
+        '18': '4.5rem',
+        '88': '22rem',
+      },
+      lineClamp: {
+        1: '1',
+        2: '2',
+        3: '3',
+      },
+    },
+  },
+  plugins: [],
+};
