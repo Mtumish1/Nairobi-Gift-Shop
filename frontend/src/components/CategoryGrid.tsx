@@ -1,5 +1,13 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Heart, Briefcase, Gift, Flower, Users, Sparkles } from 'lucide-react';
+import { getCategories } from '../services/api';
+
+interface Category {
+  id: number;
+  name: string;
+  description: string | null;
+  image_url: string | null;
+}
 
 interface CategoryGridProps {
   selectedCategory: string;
@@ -8,18 +16,37 @@ interface CategoryGridProps {
   onOccasionChange: (occasion: string) => void;
 }
 
+const categoryAppearance: { [key: string]: { icon: React.ElementType, color: string } } = {
+  default: { icon: Gift, color: 'from-gray-500 to-gray-600' },
+  flowers: { icon: Flower, color: 'from-pink-500 to-red-500' },
+  chocolates: { icon: Heart, color: 'from-yellow-800 to-yellow-600' },
+  'gift baskets': { icon: Gift, color: 'from-green-500 to-teal-500' },
+  personalized: { icon: Sparkles, color: 'from-purple-500 to-pink-500' },
+  corporate: { icon: Briefcase, color: 'from-blue-500 to-indigo-500' },
+};
+
 export function CategoryGrid({ 
-  selectedCategory, 
-  selectedOccasion, 
   onCategoryChange, 
   onOccasionChange 
 }: CategoryGridProps) {
-  const categories = [
-    { id: 'personalized', name: 'Personalized', icon: Sparkles, color: 'from-purple-500 to-pink-500' },
-    { id: 'flowers', name: 'Flowers & Romance', icon: Flower, color: 'from-pink-500 to-red-500' },
-    { id: 'corporate', name: 'Corporate', icon: Briefcase, color: 'from-blue-500 to-indigo-500' },
-    { id: 'hampers', name: 'Gift Hampers', icon: Gift, color: 'from-green-500 to-teal-500' },
-  ];
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const fetchCategories = async () => {
+      try {
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        setError('Failed to fetch categories.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchCategories();
+  }, []);
 
   const occasions = [
     { id: 'birthday', name: 'Birthday', emoji: '🎂' },
@@ -39,26 +66,31 @@ export function CategoryGrid({
           <p className="text-gray-600">Find the perfect gift for every occasion</p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
-          {categories.map((category) => {
-            const IconComponent = category.icon;
-            return (
-              <button
-                key={category.id}
-                onClick={() => onCategoryChange(category.id)}
-                className="group relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
-              >
-                <div className={`absolute inset-0 bg-gradient-to-br ${category.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
-                <div className="relative">
-                  <div className={`bg-gradient-to-br ${category.color} p-4 rounded-xl mb-4 mx-auto w-fit`}>
-                    <IconComponent className="h-8 w-8 text-white" />
+        {loading && <div className="text-center">Loading categories...</div>}
+        {error && <div className="text-center text-red-500">{error}</div>}
+        {!loading && !error && (
+          <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-16">
+            {categories.map((category) => {
+              const appearance = categoryAppearance[category.name.toLowerCase()] || categoryAppearance.default;
+              const IconComponent = appearance.icon;
+              return (
+                <button
+                  key={category.id}
+                  onClick={() => onCategoryChange(category.name.toLowerCase())}
+                  className="group relative overflow-hidden bg-gradient-to-br from-gray-50 to-gray-100 rounded-2xl p-6 hover:shadow-xl transition-all duration-300 transform hover:scale-105"
+                >
+                  <div className={`absolute inset-0 bg-gradient-to-br ${appearance.color} opacity-0 group-hover:opacity-10 transition-opacity duration-300`}></div>
+                  <div className="relative">
+                    <div className={`bg-gradient-to-br ${appearance.color} p-4 rounded-xl mb-4 mx-auto w-fit`}>
+                      <IconComponent className="h-8 w-8 text-white" />
+                    </div>
+                    <h3 className="font-semibold text-gray-900 text-center">{category.name}</h3>
                   </div>
-                  <h3 className="font-semibold text-gray-900 text-center">{category.name}</h3>
-                </div>
-              </button>
-            );
-          })}
-        </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
 
         {/* Occasions */}
         <div className="text-center mb-12">

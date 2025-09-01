@@ -1,9 +1,9 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Star, Filter, SortDesc, Heart, Eye } from 'lucide-react';
 import type { Product } from '../App';
+import { getProducts } from '../services/api';
 
 interface ProductGridProps {
-  products: Product[];
   selectedCategory: string;
   selectedOccasion: string;
   searchQuery: string;
@@ -13,7 +13,6 @@ interface ProductGridProps {
 }
 
 export function ProductGrid({ 
-  products, 
   selectedCategory, 
   selectedOccasion, 
   searchQuery, 
@@ -21,8 +20,26 @@ export function ProductGrid({
   onCategoryChange,
   onOccasionChange
 }: ProductGridProps) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const [favorites, setFavorites] = useState<string[]>([]);
   const [sortBy, setSortBy] = useState<'price-low' | 'price-high' | 'rating' | 'popular'>('popular');
+
+  useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const data = await getProducts();
+        setProducts(data);
+      } catch (err) {
+        setError('Failed to fetch products. Please try again later.');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProducts();
+  }, []);
 
   const filteredProducts = products.filter(product => {
     const matchesCategory = selectedCategory === 'all' || product.category === selectedCategory;
@@ -55,6 +72,14 @@ export function ProductGrid({
         : [...prev, productId]
     );
   };
+
+  if (loading) {
+    return <div className="text-center py-12">Loading products...</div>;
+  }
+
+  if (error) {
+    return <div className="text-center py-12 text-red-500">{error}</div>;
+  }
 
   return (
     <section className="py-8 bg-gray-50 min-h-screen">
