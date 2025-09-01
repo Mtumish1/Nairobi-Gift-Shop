@@ -14,6 +14,10 @@ app.use('/api/users', userRoutes);
 import productRoutes from './api/routes/products';
 app.use('/api/products', productRoutes);
 
+import categoryRoutes from './api/routes/categories';
+app.use('/api/categories', categoryRoutes);
+
+
 
 
 export default app;
