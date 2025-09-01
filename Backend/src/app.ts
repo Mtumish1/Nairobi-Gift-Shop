@@ -17,6 +17,14 @@ app.use('/api/products', productRoutes);
 import categoryRoutes from './api/routes/categories';
 app.use('/api/categories', categoryRoutes);
 
+import orderRoutes from './api/routes/orders';
+app.use('/api/orders', orderRoutes);
+
+import webhookRoutes from './api/routes/webhooks';
+app.use('/api/webhooks', webhookRoutes);
+
+
+
 
 
 
